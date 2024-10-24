@@ -354,7 +354,7 @@ def hull_distance_correlations(
     for config_index in list(range(corr.shape[0])):
 
         # Find the simplex that contains the current configuration's composition, and find the hull energy for that composition
-        relevant_simplex_index, _ = lower_hull_simplex_containing(
+        relevant_simplex_index, _ = _lower_hull_simplex_containing(
             compositions=compositions[config_index].reshape(1, -1),
             convex_hull=hull,
             lower_hull_simplex_indices=lower_simplices,
@@ -623,5 +623,4 @@ def orderparam_gradient(
         predicted_grad += np.sum(corr_overenum[simplex], axis=0) * _simplex_volume(
             comp_overenum[simplex, :]
         )
-
     return (predicted_grad - calc_grad) * (1 / simplex.shape[0])
