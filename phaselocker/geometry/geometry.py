@@ -589,7 +589,7 @@ def orderparam_gradient(
     overenum_comp: np.ndarray,
     predicted_simplices: np.ndarray,
 ):
-    """Gradient of the cone error functional, abstracted to any composition dimension.
+    """Negative gradient of the cone error functional, abstracted to any composition dimension.
     Parameters
     ----------
     imposed_gs_corr: np.ndarray
