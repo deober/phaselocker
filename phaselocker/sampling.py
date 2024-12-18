@@ -2,6 +2,20 @@ import numpy as np
 from typing import List, Callable
 
 
+
+def compose_l_p_norm_potential(order,scaling):
+    """Templates a given l_p norm for use in Monte Carlo sampling. 
+    Parameters
+    ----------
+    order:float
+        A positive float desribing the order (see numpy.linalg.norm for further explanation)
+    scaling:float
+        Multiplies with the value of the vector norm. Increasing this value will increasingly regularize Monte Carlo results.
+    """
+    def l_p_norm_function(eci):
+        return scaling*np.power(np.linalg.norm(eci,ord=order),order)
+
+
 def metropolis_MC_sampling(
     initial_site: np.array,
     step_size: float,
