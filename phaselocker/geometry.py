@@ -31,8 +31,6 @@ def full_hull(
 def _barycentric_coordinates(point: np.ndarray, vertices: np.ndarray) -> np.ndarray:
     """Returns the barycentric coordinates of `point` with respect to the simplex defined by `vertices`.
 
-    TODO: Take multiple points?
-
     Parameters
     ----------
     point : np.ndarray of floats, shape (n_dim,)

@@ -1,3 +1,3 @@
-from . import geometry, sampling
+from . import geometry, sampling, visualization
 
-__all__ = ["geometry", "sampling"]
+__all__ = ["geometry", "sampling","visualization"]

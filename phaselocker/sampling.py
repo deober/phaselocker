@@ -1,9 +1,11 @@
 import numpy as np
 from typing import List, Callable
+from sklearn.metrics import mean_squared_error
+from .geometry import full_hull, lower_hull
 
 
 
-def compose_l_p_norm_potential(order,scaling):
+def compose_l_p_norm_potential(order,scaling)->Callable:
     """Templates a given l_p norm for use in Monte Carlo sampling. 
     Parameters
     ----------
@@ -11,9 +13,58 @@ def compose_l_p_norm_potential(order,scaling):
         A positive float desribing the order (see numpy.linalg.norm for further explanation)
     scaling:float
         Multiplies with the value of the vector norm. Increasing this value will increasingly regularize Monte Carlo results.
+
+    Returns
+    -------
+    l_p_norm_potential:Callable
+        General 'potential' unary function. Takes a coefficient vector, returns a positive scalar. 
     """
     def l_p_norm_function(eci):
         return scaling*np.power(np.linalg.norm(eci,ord=order),order)
+    
+    return l_p_norm_function
+
+def compose_likelihood_potential(beta, corr, formation_energies)->Callable:
+    """Templates a likelihood function potential for use in Monte Carlo sampling.
+    Parameters
+    ----------
+    beta: float
+        Positive scalar 'precision' term for the likelihood function. 
+    correlations:np.ndarray
+        Matrix of shape (n,k) of n configurations, and k Effective Cluster Interactions (ECIs, i.e. model parameters)
+    formation_energies:np.ndarray
+        Vector of n formation energies
+    
+    Returns
+    -------
+    likelihood_potential: Callable
+        A unary likelihood function. Takes a vector of ECI, returns positive scalar
+    """
+    def likelihood_potential(eci):
+        return beta * mean_squared_error(formation_energies, corr @ eci)
+    
+    return likelihood_potential
+
+def compose_hard_cone_potential(all_comp,all_corr,observed_vertices):
+    def hard_cone_potential(eci):
+        predicted_energies = all_corr[:,model_indices]@eci
+        predicted_hull =  full_hull(compositions=all_comp, energies = predicted_energies)
+        vertices , _ = lower_hull(predicted_hull)
+        missing = []
+        spurious = []
+        for t in observed_vertices:
+            if t not in vertices:
+                missing.append(t)
+        for p in vertices:
+            if p not in observed_vertices:
+                spurious.append(p)
+
+        if len(missing) == 0 and len(spurious)==0:
+            return 0
+        else:
+            return np.inf
+    return hard_cone_potential
+
 
 
 def metropolis_MC_sampling(
