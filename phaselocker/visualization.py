@@ -4,7 +4,7 @@ from sklearn.metrics import mean_squared_error
 from bokeh.models import LinearAxis, Range1d
 from bokeh.models import HoverTool
 from bokeh.models import ColumnDataSource
-from .geometry import full_hull,lower_hull
+from .geometry import full_hull, lower_hull
 
 
 def binary_convex_hull_plotter(
@@ -163,3 +163,88 @@ def binary_convex_hull_plotter(
 
     return p
 
+
+def eci_plot(
+    eci: np.ndarray,
+):
+    """
+    Plots the values of ECI.
+    Parameters
+    ----------
+    eci: np.ndarray
+        ECI values. If provided shape is (k,), it will plot the values of the ECI. If many samples are provided and the shape is (p, k),
+        this will instead create a boxplot for each ECI.
+    basis_dict: dict, optional
+        Basis dictionary from CASM. If provided, plot will divide ECI into pairs, triplets, etc.
+    upscaling_vec: np.array, optional
+        Bit vector of length q, where q>k and where the number of nonzero (1 or True) entries in q is equal to k.
+        If the basis dictionary is provided, but the basis dictionary contains more basis vectors than there are ECI dimensions,
+        the upscaling  vector contains 1 or True in the indices of used ECI, and 0 at the indices of un-used ECI.
+    Returns
+    -------
+    p: figure
+        Bokeh figure object. Can be displayed with bokeh.plotting.show(p)
+    """
+    if len(eci.shape) == 2:
+        p = figure(x_range=list(map(str, range(eci.shape[1]))), width=1100, height=800)
+    elif len(eci.shape) == 1:
+        p = figure(width=1100, height=800)
+
+    if len(eci.shape) == 1:
+        # Plot ECI values
+        p.xaxis.axis_label = "ECI Index"
+        p.yaxis.axis_label = "ECI Value (eV)"
+        p.xaxis.axis_label_text_font_size = "21pt"
+        p.yaxis.axis_label_text_font_size = "21pt"
+        p.xaxis.major_label_text_font_size = "5pt"
+        p.yaxis.major_label_text_font_size = "21pt"
+        p.scatter(list(range(len(eci))), eci, color="black")
+
+    elif len(eci.shape) > 1:
+        # Calculate boxplot statistics
+        qmin, q1, q2, q3, qmax = np.percentile(eci, [0, 25, 50, 75, 100], axis=0)
+        iqr = q3 - q1
+
+        p.xaxis.axis_label = "ECI Index"
+        p.yaxis.axis_label = "ECI Value (eV)"
+        p.xaxis.axis_label_text_font_size = "21pt"
+        p.yaxis.axis_label_text_font_size = "21pt"
+        p.xaxis.major_label_text_font_size = "5pt"
+        p.yaxis.major_label_text_font_size = "21pt"
+
+        # Add boxplot elements
+        for col_idx in range(eci.shape[1]):
+            p.segment(
+                [str(col_idx)],
+                qmax[col_idx],
+                [str(col_idx)],
+                q3[col_idx],
+                line_color="black",
+            )
+            p.segment(
+                [str(col_idx)],
+                qmin[col_idx],
+                [str(col_idx)],
+                q1[col_idx],
+                line_color="black",
+            )
+            p.vbar(
+                [str(col_idx)],
+                0.7,
+                q2[col_idx],
+                q3[col_idx],
+                line_color="black",
+                fill_color="#8CBED6",
+                fill_alpha=0.8,
+            )
+            p.vbar(
+                [str(col_idx)],
+                0.7,
+                q1[col_idx],
+                q2[col_idx],
+                line_color="black",
+                fill_color="#8CBED6",
+                fill_alpha=0.8,
+            )
+
+    return p
