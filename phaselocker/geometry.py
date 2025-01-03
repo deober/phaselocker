@@ -4,6 +4,8 @@ from scipy.spatial import ConvexHull
 from typing import List, Tuple, Sequence
 from math import factorial
 
+# Some functions within are used with permission from Used with permission from https://github.com/Van-der-Ven-Group/thermocore/tree/main
+
 
 def full_hull(
     compositions: np.ndarray, energies: np.ndarray, qhull_options=None
@@ -188,6 +190,7 @@ def _lower_hull_simplex_containing(
         Indices of lower hull simplices (within `convex_hull.simplices`), if known.
     tolerance : float, optional
         Tolerance for identifying lower hull simplices (default is 1e-14).
+
 
     Returns
     -------
@@ -586,7 +589,6 @@ def hull_simplices(hull: ConvexHull):
     return hull.simplices[simplices]
 
 
-# TODO: Modify gradient to operate without training data
 def orderparam_gradient(
     imposed_gs_corr: np.ndarray,
     imposed_gs_comp: np.ndarray,
@@ -635,3 +637,65 @@ def orderparam_gradient(
             overenum_comp[simplex, :]
         )
     return (predicted_grad - imposed_grad) * (1 / simplex.shape[0])
+
+
+def least_squares_norm_neg_gradient(
+    t: np.ndarray, X: np.ndarray, w: np.ndarray
+) -> np.ndarray:
+    """Calculates the negative gradient of the least squares norm.
+
+    Notes: Derivation
+    ||t-XV||^2 = (t-XV).T (t-XV)
+    = t.Tt - t.tXV - V.T X.T t + V.T X.T XV
+    d/dV--> -2X.T t + 2 X.T X V
+    -->X.T t - X.T X V
+
+    Parameters
+    ----------
+    t:np.ndarray
+        Vector of target values, shape (n,) where n is the number of data points.
+    X:np.ndarray
+        Matrix of descriptors, shape (n,k) where n is the number of data points and k is the number of descriptor dimensions.
+    w:np.ndarray
+        Vector of linear model coefficients, shape (k,) where k is the number of descriptor dimensions.
+
+    Returns
+    -------
+    neg_grad:np.ndarray
+        Negative gradient of the least squares norm, shape (k,) where k is the number of descriptor dimensions.
+    """
+    return X.T @ t - X.T @ X @ w
+
+
+def upscale_eci_vector(
+    pruned_ecis: np.ndarray, eci_is_nonzero: np.ndarray
+) -> np.ndarray:
+    """Intended for cases when an ECI vector is pruned, and a user would like to then upscale the ECI vector back to its original size.
+        Takes a pruned vector of nonzero ECIs of length m, and a mask of length n, where n is the length of the original (non-sparse) ECI vector, and n>m.
+        The mask is a boolean array of length n, where the nonzero entries correspond to the indices of the ECIs that were pruned.
+        The output is a vector of length n, where the nonzero entries come from the pruned_ecis vector, and the pruned entries are zero.
+
+
+    Parameters
+    ----------
+    ecis : np.ndarray
+        Vector of ECI values, shape (m,)
+    eci_is_nonzero : np.ndarray
+        Vector of Booleans, shape (n,) where True indicates the ECI is included in the vector. Number of True should equal the length of the ECI vector. Otherwise, the function will return an error.
+
+    Returns
+    -------
+    ecis_upscaled : np.ndarray
+        Vector of ECI values, shape (n,) upscaled to the original size of n.
+    """
+    if np.sum(eci_is_nonzero) != len(pruned_ecis):
+        raise ValueError(
+            "The number of True elements in the mask must equal the length of the ECI vector."
+        )
+    # Create a new vector of zeros. The length of the new vector will be the same as the mask.
+    # Find the indices of the mask where the value is 1
+    # Replace the zeros in the new vector with the ECI values, in the order of the indices of the mask where the value is 1
+    indices = np.nonzero(eci_is_nonzero)[0]
+    ecis_upscaled = np.zeros(len(eci_is_nonzero))
+    ecis_upscaled[indices] = pruned_ecis
+    return ecis_upscaled
