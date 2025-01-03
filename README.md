@@ -5,7 +5,9 @@ For context, see https://doi.org/10.1103/PhysRevMaterials.8.103803
 
 Requires numpy, scipy, and bokeh. 
 
-Modules: 
+Modules:  
+
+
 phaselocker.geometry:  
   Contains most functions; everything necessary for quantifying ground state accuracy, finding ground state cones, finding lower convex hulls, etc.  
   
