@@ -43,7 +43,7 @@ def compose_likelihood_potential(beta, corr, formation_energies) -> Callable:
     """
 
     def likelihood_potential(eci):
-        return beta * mean_squared_error(formation_energies, corr @ eci)
+        return beta * np.power(np.linalg.norm(formation_energies-corr @ eci),2)
 
     return likelihood_potential
 
