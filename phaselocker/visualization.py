@@ -1,6 +1,5 @@
 import numpy as np
 from bokeh.plotting import figure, show
-from sklearn.metrics import mean_squared_error
 from bokeh.models import LinearAxis, Range1d
 from bokeh.models import HoverTool
 from bokeh.models import ColumnDataSource
