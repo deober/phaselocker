@@ -1,8 +1,6 @@
 ![Logo](https://raw.githubusercontent.com/deober/phaselocker/f16ed50974a8bac16e6201ef7cdf5cfb368dbcf6/phaselocker_logo_with_text.svg?token=AMM2ZZUYVKP3BIWGFTOTASLHSAHZU)
 
-A minimal python package for Bayesian cluster expansion. Optionally for finding, enforcing and sampling cluster expansion ground state cones.
-
-For context, see https://doi.org/10.1103/PhysRevMaterials.8.103803 
+A minimal python package for Bayesian cluster expansion. Optionally for finding, enforcing and sampling cluster expansion ground state cones. For context, see https://doi.org/10.1103/PhysRevMaterials.8.103803 
 
 Requires numpy, scipy and bokeh. Example notebooks may use additional packages. 
 
