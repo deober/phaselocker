@@ -4,7 +4,7 @@ A minimal python package for Bayesian cluster expansion. Optionally for finding,
 
 For context, see https://doi.org/10.1103/PhysRevMaterials.8.103803 
 
-Requires numpy, scipy, sklearn and bokeh. 
+Requires numpy, scipy and bokeh. Example notebooks may use additional packages. 
 
 ### Modules:  
 
