@@ -145,8 +145,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.5"
-     inkscape:cx="718.88131"
-     inkscape:cy="382.01368"
+     inkscape:cx="113.88131"
+     inkscape:cy="342.01368"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -163,7 +163,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -186,21 +186,24 @@
        id="g875"
        transform="translate(-0.58126235,15.803667)"
        style="fill:#ffffff;fill-opacity:1" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot871"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(1.748524,0,0,1.748524,7.4651165,-381.76827)"><flowRegion
-         id="flowRegion873"><rect
-           id="rect875"
-           width="544"
-           height="230"
-           x="-6"
-           y="293.70081" /></flowRegion><flowPara
-         id="flowPara877"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:sans-serif">Phasel  cker</flowPara></flowRoot>    <g
+       style="font-style:normal;font-weight:normal;font-size:69.94096375px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.74852395"
+       x="-3.0260274"
+       y="193.65663"
+       id="text854"><tspan
+         sodipodi:role="line"
+         x="-3.0260274"
+         y="193.65663"
+         id="tspan852"
+         style="stroke-width:1.74852395"><tspan
+           x="-3.0260274"
+           y="193.65663"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:sans-serif;stroke-width:1.74852395"
+           id="tspan850">Phasel  cker</tspan></tspan></text>
+    <g
        id="g1029"
-       transform="matrix(0.19127249,0,0,0.19127249,197.18963,183.83519)">
+       transform="matrix(0.19127249,0,0,0.19127249,180.25619,183.83519)">
       <g
          inkscape:export-ydpi="96"
          inkscape:export-xdpi="96"
