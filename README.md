@@ -1,4 +1,6 @@
-# phaselocker
+# Phaselocker
+![Logo](https://raw.githubusercontent.com/deober/phaselocker/762abd047e682e52978e9b8fdefd4415138a0663/phaselocker_logo.svg?token=AMM2ZZT2VWPPPYI277SIPHTHR7YCY)
+
 A minimal necessary python package for finding, enforcing and sampling cluster expansion ground state cones.
 
 For context, see https://doi.org/10.1103/PhysRevMaterials.8.103803 
