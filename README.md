@@ -1,5 +1,5 @@
 # Phaselocker
-![Logo](https://raw.githubusercontent.com/deober/phaselocker/762abd047e682e52978e9b8fdefd4415138a0663/phaselocker_logo.svg?token=AMM2ZZT2VWPPPYI277SIPHTHR7YCY)
+![Logo](https://raw.githubusercontent.com/deober/phaselocker/f16ed50974a8bac16e6201ef7cdf5cfb368dbcf6/phaselocker_logo_with_text.svg?token=AMM2ZZUYVKP3BIWGFTOTASLHSAHZU)
 
 A minimal necessary python package for finding, enforcing and sampling cluster expansion ground state cones.
 
