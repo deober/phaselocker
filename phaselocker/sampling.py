@@ -1,6 +1,5 @@
 import numpy as np
 from typing import List, Callable
-from sklearn.metrics import mean_squared_error
 from .geometry import full_hull, lower_hull, orderparam_soft
 
 
