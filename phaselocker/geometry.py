@@ -480,7 +480,7 @@ def _matching_row_indices(
 
 def index_conversion(
     true_corr: np.ndarray, overenum_corr: np.ndarray, only_these_indices=[None]
-):
+) -> dict:
     """Finds where true_corr matches overenum_corr, and creates a dictionary"""
 
     if only_these_indices == [None]:
@@ -496,7 +496,7 @@ def index_conversion(
 # TODO: Modify the envelope functional to operate without training data
 def orderparam_soft(
     true_hull: ConvexHull, predicted_hull: ConvexHull, index_conversion_dict: dict
-):
+) -> float:
     """Computes the value of the envelope error: an integral of linear interpolation between known ground states,
     minus integral of predicted convex hull.
 
@@ -597,7 +597,7 @@ def orderparam_gradient(
     overenum_corr: np.ndarray,
     overenum_comp: np.ndarray,
     predicted_simplices: np.ndarray,
-):
+) -> np.ndarray:
     """Gradient of the cone error functional, abstracted to any composition dimension.
     Parameters
     ----------

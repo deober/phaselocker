@@ -1,7 +1,13 @@
 import numpy as np
 
 
-def RVM(alphas_init, beta_init, dmat, t, num_loops=300):
+def RVM(
+    alphas_init: np.ndarray,
+    beta_init: float,
+    dmat: np.ndarray,
+    t: np.ndarray,
+    num_loops: int = 300,
+) -> tuple:
     """Implements the Relevance Vector Machine (Tipping 2001), following the description from
     Bishop in "Pattern Recognition and Machine Learning", Chapter 7
 
@@ -67,7 +73,9 @@ def RVM(alphas_init, beta_init, dmat, t, num_loops=300):
     return (current_mean, current_cov, np.diag(current_A), current_beta)
 
 
-def log_model_evidence(beta, alphas, dmat, t):
+def log_model_evidence(
+    beta: float, alphas: np.ndarray, dmat: np.ndarray, t: np.ndarray
+) -> float:
     """Calculates model evidence given scalar values of model and coefficient precisions.
     Following Bishop "Pattern Recognition and Machine Learning", chapter 3.
 

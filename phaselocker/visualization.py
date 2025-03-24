@@ -6,11 +6,11 @@ from .geometry import full_hull, lower_hull
 
 
 def binary_convex_hull_plotter(
-    comp,
-    observed_energies,
+    comp: np.ndarray,
+    observed_energies: np.ndarray,
     predicted_energies: np.ndarray = None,
     names: np.ndarray = None,
-):
+) -> figure:
     """Formation energy and convex hull plotter.
 
     Parameters
@@ -167,7 +167,7 @@ def binary_convex_hull_plotter(
 
 def eci_plot(
     eci: np.ndarray,
-):
+) -> figure:
     """
     Plots the values of ECI.
     Parameters

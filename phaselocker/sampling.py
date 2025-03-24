@@ -1,9 +1,10 @@
 import numpy as np
 from typing import List, Callable
 from .geometry import full_hull, lower_hull, orderparam_soft
+from scipy.spatial import ConvexHull
 
 
-def compose_l_p_norm_potential(order, scaling) -> Callable:
+def compose_l_p_norm_potential(order: float, scaling: float) -> Callable:
     """Templates a given l_p norm for use in Monte Carlo sampling.
     Parameters
     ----------
@@ -24,7 +25,7 @@ def compose_l_p_norm_potential(order, scaling) -> Callable:
     return l_p_norm_function
 
 
-def compose_elliptical_potential(scaling_mat):
+def compose_elliptical_potential(scaling_mat: np.ndarray) -> Callable:
     """Templates a more generalized form of the l2 norm potential, where each basis can have its own precision. Also allows
     for off-diagonal precisions.
 
@@ -45,7 +46,9 @@ def compose_elliptical_potential(scaling_mat):
     return elliptical_potential
 
 
-def compose_likelihood_potential(beta, corr, formation_energies) -> Callable:
+def compose_likelihood_potential(
+    beta: float, corr: np.ndarray, formation_energies: np.ndarray
+) -> Callable:
     """Templates a likelihood function potential for use in Monte Carlo sampling.
     Parameters
     ----------
@@ -68,7 +71,9 @@ def compose_likelihood_potential(beta, corr, formation_energies) -> Callable:
     return likelihood_potential
 
 
-def compose_hard_cone_potential(all_comp, all_corr, observed_vertices):
+def compose_hard_cone_potential(
+    all_comp: np.ndarray, all_corr: np.ndarray, observed_vertices: np.ndarray
+) -> Callable:
     """Templates a 'hard' potential that returns zero if an ECI vector preserves ground states (indexed by the observed vertices variable)
     and np.inf otherwise.
 
@@ -111,8 +116,12 @@ def compose_hard_cone_potential(all_comp, all_corr, observed_vertices):
 
 
 def compose_soft_cone_potential(
-    true_hull, index_conversion, all_comp, all_corr, cone_conjugate
-):
+    true_hull: ConvexHull,
+    index_conversion: dict,
+    all_comp: np.ndarray,
+    all_corr: np.ndarray,
+    cone_conjugate: float,
+) -> Callable:
     """ """
 
     def ground_state_potential(eci):
@@ -134,7 +143,7 @@ def metropolis_MC_sampling(
     num_loops: int,
     steps_per_loop: int,
     potentials: List[Callable],
-):
+) -> dict:
     """Performs metropolis monte carlo sampling within the ECI space, following some potential surface across the eci domain.
 
     Parameters
