@@ -479,12 +479,13 @@ def _matching_row_indices(
 
 
 def index_conversion(
-    true_corr: np.ndarray, overenum_corr: np.ndarray, only_these_indices=None
+    true_corr: np.ndarray, overenum_corr: np.ndarray, only_these_indices=[None]
 ):
     """Finds where true_corr matches overenum_corr, and creates a dictionary"""
 
-    if any(only_these_indices) == None:
-        only_these_indices = list(range(true_corr.shape[0]))
+    if only_these_indices == [None]:
+        print("No indices provided for index conversion dictionary, using all indices")
+        only_these_indices = np.array(list(range(true_corr.shape[0])))
 
     search_corr = true_corr[only_these_indices, :]
 

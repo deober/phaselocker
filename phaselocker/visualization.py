@@ -1,5 +1,5 @@
 import numpy as np
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure
 from sklearn.metrics import mean_squared_error
 from bokeh.models import LinearAxis, Range1d
 from bokeh.models import HoverTool
@@ -52,11 +52,11 @@ def binary_convex_hull_plotter(
     # Create a figure and format axes and labels
     p = figure(width=1100, height=800)
     p.xaxis.axis_label = "Composition (X)"
-    p.yaxis.axis_label = "Formation Energy"
-    p.xaxis.axis_label_text_font_size = "21pt"
-    p.yaxis.axis_label_text_font_size = "21pt"
-    p.xaxis.major_label_text_font_size = "21pt"
-    p.yaxis.major_label_text_font_size = "21pt"
+    p.yaxis.axis_label = "Formation Energy (eV)"
+    p.xaxis.axis_label_text_font_size = "30pt"
+    p.yaxis.axis_label_text_font_size = "30pt"
+    p.xaxis.major_label_text_font_size = "30pt"
+    p.yaxis.major_label_text_font_size = "30pt"
 
     # Scatter plot for observed energies (in black)
     p.scatter(
@@ -161,6 +161,9 @@ def binary_convex_hull_plotter(
         hover.tooltips.append(("name", "@names"))
     p.add_tools(hover)
 
+    # Set legend font size:
+    p.legend.label_text_font_size = "30pt"
+
     return p
 
 
@@ -192,12 +195,12 @@ def eci_plot(
 
     if len(eci.shape) == 1:
         # Plot ECI values
-        p.xaxis.axis_label = "ECI Index"
-        p.yaxis.axis_label = "ECI Value (eV)"
-        p.xaxis.axis_label_text_font_size = "21pt"
-        p.yaxis.axis_label_text_font_size = "21pt"
+        p.xaxis.axis_label = "Cluster Index"
+        p.yaxis.axis_label = "Effective Cluster Interaction (eV)"
+        p.xaxis.axis_label_text_font_size = "30pt"
+        p.yaxis.axis_label_text_font_size = "30pt"
         p.xaxis.major_label_text_font_size = "5pt"
-        p.yaxis.major_label_text_font_size = "21pt"
+        p.yaxis.major_label_text_font_size = "30pt"
         p.scatter(list(range(len(eci))), eci, color="black")
 
     elif len(eci.shape) > 1:
@@ -205,12 +208,12 @@ def eci_plot(
         qmin, q1, q2, q3, qmax = np.percentile(eci, [0, 25, 50, 75, 100], axis=0)
         iqr = q3 - q1
 
-        p.xaxis.axis_label = "ECI Index"
-        p.yaxis.axis_label = "ECI Value (eV)"
-        p.xaxis.axis_label_text_font_size = "21pt"
-        p.yaxis.axis_label_text_font_size = "21pt"
+        p.xaxis.axis_label = "Cluster Index"
+        p.yaxis.axis_label = "Effective Cluster Interaction (eV)"
+        p.xaxis.axis_label_text_font_size = "30pt"
+        p.yaxis.axis_label_text_font_size = "30pt"
         p.xaxis.major_label_text_font_size = "5pt"
-        p.yaxis.major_label_text_font_size = "21pt"
+        p.yaxis.major_label_text_font_size = "30pt"
 
         # Add boxplot elements
         for col_idx in range(eci.shape[1]):

@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List, Callable
 from sklearn.metrics import mean_squared_error
-from .geometry import full_hull, lower_hull
+from .geometry import full_hull, lower_hull, orderparam_soft
 
 
 def compose_l_p_norm_potential(order, scaling) -> Callable:
@@ -25,6 +25,27 @@ def compose_l_p_norm_potential(order, scaling) -> Callable:
     return l_p_norm_function
 
 
+def compose_elliptical_potential(scaling_mat):
+    """Templates a more generalized form of the l2 norm potential, where each basis can have its own precision. Also allows
+    for off-diagonal precisions.
+
+    Parameters
+    ----------
+    scaling_mat:np.ndarray
+        Matrix of shape (M,M) where M is the number of basis functions.
+
+    Returns
+    -------
+    elliptical_potential:callable
+        potential function that accepts a coefficient vector of shape (M,), returns scalar potential
+    """
+
+    def elliptical_potential(eci):
+        return eci.T @ scaling_mat @ eci
+
+    return elliptical_potential
+
+
 def compose_likelihood_potential(beta, corr, formation_energies) -> Callable:
     """Templates a likelihood function potential for use in Monte Carlo sampling.
     Parameters
@@ -43,12 +64,32 @@ def compose_likelihood_potential(beta, corr, formation_energies) -> Callable:
     """
 
     def likelihood_potential(eci):
-        return beta * np.power(np.linalg.norm(formation_energies-corr @ eci),2)
+        return beta * np.power(np.linalg.norm(formation_energies - corr @ eci), 2)
 
     return likelihood_potential
 
 
 def compose_hard_cone_potential(all_comp, all_corr, observed_vertices):
+    """Templates a 'hard' potential that returns zero if an ECI vector preserves ground states (indexed by the observed vertices variable)
+    and np.inf otherwise.
+
+    NOTE: It is easy to make a mistake with this function; if you are using a small calculated dataset, and a much larger superset
+    of both calculated and uncalculated configurations, the observed_vertices MUST INDEX INTO THE LARGER SUPERSET. The indices should NOT
+    index into the smaller set of only-calculated configurations, even if this is how you are finding the vertices to impose. If
+    you are trying to impose calculated ground states, make sure that your imposed ground state configurations 'observed_vertices' are indexing
+    into the larger configuration set.
+
+    Parameters
+    ----------
+    all_comp: np.ndarray
+        Shape(n,m) of n configurations and m composition dimensions.
+    all_corr:np.ndarray
+        Cluster correlation matrix of shape(n,k) with n configurations and k cluster / feature dimensions.
+    observed_vertices: np.ndarray
+        Vector of indices denoting ground states that must be enforced; shape(q) where  (m+1) < q < n
+        (m is composition dimensions, n is number of configurations). See cautionary note above.
+    """
+
     def hard_cone_potential(eci):
         predicted_energies = all_corr @ eci
         predicted_hull = full_hull(compositions=all_comp, energies=predicted_energies)
@@ -68,6 +109,24 @@ def compose_hard_cone_potential(all_comp, all_corr, observed_vertices):
             return np.inf
 
     return hard_cone_potential
+
+
+def compose_soft_cone_potential(
+    true_hull, index_conversion, all_comp, all_corr, cone_conjugate
+):
+    """ """
+
+    def ground_state_potential(eci):
+        predicted_energies = all_corr @ eci
+        predicted_hull = full_hull(compositions=all_comp, energies=predicted_energies)
+        orderparam = orderparam_soft(
+            true_hull=true_hull,
+            predicted_hull=predicted_hull,
+            index_conversion_dict=index_conversion,
+        )
+        return cone_conjugate * orderparam
+
+    return ground_state_potential
 
 
 def metropolis_MC_sampling(
@@ -127,4 +186,4 @@ def metropolis_MC_sampling(
         samples.append(current_site)
         accept_rates.append(acceptance_in_loop / steps_per_loop)
 
-    return {"samples": samples, "accept_rate": accept_rates}
+    return {"samples": np.array(samples).tolist(), "accept_rate": accept_rates}
