@@ -14,3 +14,6 @@ Requires numpy, scipy and bokeh. Example notebooks may use additional packages.
   
 #### phaselocker.visualization:  
   Contains a bokeh plotting function to visualize formation energies and lower convex hulls in binary alloys, as well as as a box and whiskers plot to visualize ECI posterior uncertainties. 
+
+#### phaselocker.fitting:
+  Contains basic statistical learning fitting algorithms and model comparison tools.
