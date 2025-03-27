@@ -4,7 +4,7 @@ from scipy.spatial import ConvexHull
 from typing import List, Tuple, Sequence
 from math import factorial
 
-# Some functions within are used with permission from Used with permission from https://github.com/Van-der-Ven-Group/thermocore/tree/main
+# Some functions within are used with permission from https://github.com/Van-der-Ven-Group/thermocore/tree/main
 
 
 def full_hull(
