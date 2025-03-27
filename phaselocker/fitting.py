@@ -6,7 +6,7 @@ def RVM(
     beta_init: float,
     dmat: np.ndarray,
     t: np.ndarray,
-    num_loops: int = 300,
+    num_loops: int = 50,
 ) -> tuple:
     """Implements the Relevance Vector Machine (Tipping 2001), following the description from
     Bishop in "Pattern Recognition and Machine Learning", Chapter 7
@@ -64,7 +64,7 @@ def RVM(
                 eci_squared = 1e-20
             current_A[alpha_index, alpha_index] = gamma[alpha_index] / eci_squared
 
-        current_cov = np.linalg.inv(current_A + current_beta * dmat.T @ dmat)
+        current_cov = np.linalg.pinv(current_A + current_beta * dmat.T @ dmat)
         current_mean = current_beta * current_cov @ dmat.T @ t
         current_beta = 1 / (
             np.power(np.linalg.norm(t - dmat @ current_mean), 2) / (N - sum(gamma))
@@ -113,3 +113,80 @@ def log_model_evidence(
         - (N / 2) * np.log(2 * np.pi)
     )
     return log_model_evidence
+
+
+def analytic_posterior(
+    dmat: np.ndarray,
+    weight_covariance_matrix: np.ndarray,
+    weight_mean_vec: np.ndarray,
+    t_covariance_matrix: np.ndarray,
+    t: np.ndarray,
+) -> tuple:
+    """Calculates the posterior distribution (mean and covariance matrix) given the weight mean vector,
+    weight covariance matrix, target values vector, and target values covariance matrix.
+
+    Taken from Bishop Pattern Recognition and Machine Learning, 2006, p. 93
+
+    Parameters
+    ----------
+    dmat:np.ndarray
+        Descriptor matrix shape (N,M) where N is the number of observations (scalar data points) and M is the number of basis vectors.
+    weight_covariance_matrix: np.ndarray
+        Weight covariance matrix, shape (M,M).
+    weight_mean_vec: np.ndarray
+        Weight mean vector, shape (M,)
+    t_covariance_matrix: np.ndarray
+        Target values covariance matrix, shape (N,N). Assuming iid model noise error, this should be a diagonal matrix
+    t: np.ndarray
+        Target values vector, shape (N,)
+
+    Returns
+    -------
+    posterior_mean_vec: np.ndarray
+        Posterior mean vector.
+    posterior_covariance_matrix: np.ndarray
+        Posterior covariance matrix.
+    """
+    # Calculate precision matrices (inverse of covariance matrices)
+    weight_precision_matrix = np.linalg.pinv(weight_covariance_matrix)
+    label_precision_matrix = np.linalg.pinv(t_covariance_matrix)
+
+    # Calculate the posterior distribution covariance matrix
+    posterior_covariance_matrix = np.linalg.pinv(
+        weight_precision_matrix + dmat.T @ label_precision_matrix @ dmat
+    )
+
+    # Calculate the posterior distribution mean vector
+    posterior_mean_vec = posterior_covariance_matrix @ (
+        dmat.T @ label_precision_matrix @ t + weight_precision_matrix @ weight_mean_vec
+    )
+
+    return (posterior_mean_vec, posterior_covariance_matrix)
+
+
+def least_squares_norm_neg_gradient(
+    t: np.ndarray, X: np.ndarray, w: np.ndarray
+) -> np.ndarray:
+    """Calculates the negative gradient of the least squares norm.
+
+    Notes: Derivation
+    ||t-XV||^2 = (t-XV).T (t-XV)
+    = t.Tt - t.tXV - V.T X.T t + V.T X.T XV
+    d/dV--> -2X.T t + 2 X.T X V
+    -->X.T t - X.T X V
+
+    Parameters
+    ----------
+    t:np.ndarray
+        Vector of target values, shape (n,) where n is the number of data points.
+    X:np.ndarray
+        Matrix of descriptors, shape (n,k) where n is the number of data points and k is the number of descriptor dimensions.
+    w:np.ndarray
+        Vector of linear model coefficients, shape (k,) where k is the number of descriptor dimensions.
+
+    Returns
+    -------
+    neg_grad:np.ndarray
+        Negative gradient of the least squares norm, shape (k,) where k is the number of descriptor dimensions.
+    """
+    return X.T @ t - X.T @ X @ w
