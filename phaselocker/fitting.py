@@ -6,7 +6,7 @@ def RVM(
     beta_init: float,
     dmat: np.ndarray,
     t: np.ndarray,
-    num_loops: int = 50,
+    num_loops: int = 100,
 ) -> tuple:
     """Implements the Relevance Vector Machine (Tipping 2001), following the description from
     Bishop in "Pattern Recognition and Machine Learning", Chapter 7
