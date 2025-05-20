@@ -483,7 +483,7 @@ def index_conversion(
 ) -> dict:
     """Finds where true_corr matches overenum_corr, and creates a dictionary"""
 
-    if only_these_indices == [None]:
+    if only_these_indices[0] == None:
         print("No indices provided for index conversion dictionary, using all indices")
         only_these_indices = np.array(list(range(true_corr.shape[0])))
 
