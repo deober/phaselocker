@@ -64,7 +64,7 @@ def RVM(
                 eci_squared = 1e-20
             current_A[alpha_index, alpha_index] = gamma[alpha_index] / eci_squared
 
-        current_cov = np.linalg.pinv(current_A + current_beta * dmat.T @ dmat)
+        current_cov = np.linalg.inv(current_A + current_beta * dmat.T @ dmat)
         current_mean = current_beta * current_cov @ dmat.T @ t
         current_beta = 1 / (
             np.power(np.linalg.norm(t - dmat @ current_mean), 2) / (N - sum(gamma))
@@ -73,11 +73,9 @@ def RVM(
     return (current_mean, current_cov, np.diag(current_A), current_beta)
 
 
-def log_model_evidence(
-    beta: float, alphas: np.ndarray, dmat: np.ndarray, t: np.ndarray
-) -> float:
-    """Calculates model evidence given scalar values of model and coefficient precisions.
-    Following Bishop "Pattern Recognition and Machine Learning", chapter 3.
+def log_model_evidence(beta, alphas, dmat, t):
+    """Calculates model evidence (log marginal likelihood) given model and coefficient precisions.
+    Following Bishop "Pattern Recognition and Machine Learning", chapter 7.2 .
 
     Parameters
     ----------
@@ -93,26 +91,15 @@ def log_model_evidence(
     Returns
     -------
     log_model_evidence:float
-        Log of the model evidence p(t|\beta,\alpha)
+        Log of the model evidence (marginal likelihood): ln[ p(t|X,\beta,\alpha) ]
 
     """
-    alphas = np.diag(alphas)
-    A = alphas + beta * dmat.T @ dmat
-    N = dmat.shape[0]
-    mn = beta * np.linalg.inv(A) @ dmat.T @ t
-    sign, logdet_A = np.linalg.slogdet(A)
-    model_diff = t - dmat @ mn
-    l = np.power(np.linalg.norm(model_diff), 2)
-    E_mn = (beta / 2) * l + mn.T @ (alphas / 2) @ mn
+    A = np.diag(alphas)
+    C = np.power(beta, -1) * np.eye(dmat.shape[0]) + dmat @ np.linalg.inv(A) @ dmat.T
+    Cinv = np.linalg.inv(C)
+    sign, logdet_C = np.linalg.slogdet(C)
 
-    log_model_evidence = (
-        (1 / 2) * np.sum(np.log(np.diag(alphas)))
-        + (N / 2) * np.log(beta)
-        - E_mn
-        - (1 / 2) * logdet_A
-        - (N / 2) * np.log(2 * np.pi)
-    )
-    return log_model_evidence
+    return -0.5 * (dmat.shape[0] * np.log(2 * np.pi) + logdet_C + t.T @ Cinv @ t)
 
 
 def analytic_posterior(
