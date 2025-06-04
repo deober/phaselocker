@@ -4,6 +4,9 @@ from .geometry import full_hull, lower_hull, orderparam_soft
 from scipy.spatial import ConvexHull
 
 
+KB = 8.617333262e-5  # Boltzmann's constant, eV/K
+
+
 def compose_l_p_norm_potential(order: float, scaling: float) -> Callable:
     """Templates a given l_p norm for use in Monte Carlo sampling.
     Parameters
