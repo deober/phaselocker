@@ -28,14 +28,14 @@ def compose_l_p_norm_potential(order: float, alpha: float) -> Callable:
     return l_p_norm_function
 
 
-def compose_elliptical_potential(scaling_mat: np.ndarray) -> Callable:
-    """Templates a more generalized form of the l2 norm potential, where each basis can have its own precision. Also allows
+def compose_elliptical_potential(precision_mat: np.ndarray) -> Callable:
+    """Templates a more generalized form of the (zero-centered) l2 norm potential, where each basis can have its own precision. Also allows
     for off-diagonal precisions.
 
     Parameters
     ----------
-    scaling_mat:np.ndarray
-        Matrix of shape (M,M) where M is the number of basis functions.
+    precision_mat:np.ndarray
+        Precision matrix of shape (M,M) where M is the number of basis functions.
 
     Returns
     -------
@@ -44,7 +44,7 @@ def compose_elliptical_potential(scaling_mat: np.ndarray) -> Callable:
     """
 
     def elliptical_potential(eci):
-        return eci.T @ scaling_mat @ eci
+        return (1 / 2) * eci.T @ precision_mat @ eci
 
     return elliptical_potential
 
