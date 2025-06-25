@@ -7,7 +7,7 @@ from scipy.spatial import ConvexHull
 KB = 8.617333262e-5  # Boltzmann's constant, eV/K
 
 
-def compose_l_p_norm_potential(order: float, scaling: float) -> Callable:
+def compose_l_p_norm_potential(order: float, alpha: float) -> Callable:
     """Templates a given l_p norm for use in Monte Carlo sampling.
     Parameters
     ----------
@@ -23,7 +23,7 @@ def compose_l_p_norm_potential(order: float, scaling: float) -> Callable:
     """
 
     def l_p_norm_function(eci):
-        return scaling * np.power(np.linalg.norm(eci, ord=order), order)
+        return (alpha / 2) * np.power(np.linalg.norm(eci, ord=order), order)
 
     return l_p_norm_function
 
@@ -69,7 +69,7 @@ def compose_likelihood_potential(
     """
 
     def likelihood_potential(eci):
-        return beta * np.power(np.linalg.norm(formation_energies - corr @ eci), 2)
+        return (beta / 2) * np.power(np.linalg.norm(formation_energies - corr @ eci), 2)
 
     return likelihood_potential
 
