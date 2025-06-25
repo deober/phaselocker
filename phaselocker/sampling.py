@@ -28,25 +28,30 @@ def compose_l_p_norm_potential(order: float, alpha: float) -> Callable:
     return l_p_norm_function
 
 
-def compose_elliptical_potential(precision_mat: np.ndarray) -> Callable:
-    """Templates a more generalized form of the (zero-centered) l2 norm potential, where each basis can have its own precision. Also allows
-    for off-diagonal precisions.
+def compose_multivariate_normal_potential(
+    covariance_mat: np.ndarray, mean: np.ndarray
+) -> Callable:
+    """Templates a general multivariate normal distribution potential.
 
     Parameters
     ----------
-    precision_mat:np.ndarray
-        Precision matrix of shape (M,M) where M is the number of basis functions.
+    covariance_mat:np.ndarray
+        Covariance matrix of shape (M,M) where M is the number of basis functions.
+    mean:np.ndarray
+        Mean vector of the multivariate normal distribution
 
     Returns
     -------
-    elliptical_potential:callable
+    multivariate_normal_potential:callable
         potential function that accepts a coefficient vector of shape (M,), returns scalar potential
     """
+    precision_mat = np.linalg.inv(covariance_mat)
 
-    def elliptical_potential(eci):
-        return (1 / 2) * eci.T @ precision_mat @ eci
+    def multivariate_normal_potential(eci):
+        v = eci - mean
+        return (1 / 2) * v.T @ precision_mat @ v
 
-    return elliptical_potential
+    return multivariate_normal_potential
 
 
 def compose_likelihood_potential(
